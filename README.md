@@ -83,6 +83,30 @@ CookEase needs three external service keys. Sign up and obtain them before start
 
 ---
 
+## Bundled Services
+
+The Docker stack starts three containers — all running together:
+
+| Service | URL / Port | What it's for |
+|---------|------------|---------------|
+| **App** (Laravel) | http://localhost:8000 | The CookEase web app |
+| **MySQL** | `127.0.0.1:3306` | Database — connect with [MySQL Workbench](./docs/mysql-workbench.md) using user `cookease` / pw `secret` |
+| **Mailpit** | http://localhost:8025 | Fake SMTP inbox — every email the app sends (forgot-password, notifications) lands here so you can see it instantly |
+
+For Mailpit to capture mail, your `.env` needs:
+
+```ini
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS=no-reply@cookease.local
+```
+
+---
+
 ## Everyday Commands
 
 ```powershell
@@ -121,7 +145,9 @@ For the full troubleshooting list, see [`docs/devops-with-docker.md`](./docs/dev
 ## Project Documentation
 
 - [`docs/quickstart.md`](./docs/quickstart.md) — the 3-step Docker quickstart (same as the section above)
+- [`docs/mysql-workbench.md`](./docs/mysql-workbench.md) — connect MySQL Workbench (or TablePlus / DBeaver) to the Docker database
 - [`docs/devops-with-docker.md`](./docs/devops-with-docker.md) — full DevOps pipeline: CI, staging, production, image registry, zero-downtime deploys
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md) — developer workflow: branch, PR, review, merge
 - [`CLAUDE.md`](./CLAUDE.md) — architecture, database schema, application flow, and DevOps theory
 
 ## License
