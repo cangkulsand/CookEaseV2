@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Bmi;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class BmiSeeder extends Seeder
 {
@@ -21,10 +21,10 @@ class BmiSeeder extends Seeder
         foreach ($users as $user) {
             Bmi::create([
                 'user_id' => $user->id,
-                'age'     => rand(18, 50),
-                'gender'  => ['male', 'female'][rand(0, 1)],
-                'height'  => rand(150, 190), // in cm
-                'weight'  => rand(50, 100),  // in kg
+                'age' => rand(18, 50),
+                'gender' => ['male', 'female'][rand(0, 1)],
+                'height' => rand(150, 190), // in cm
+                'weight' => rand(50, 100),  // in kg
             ]);
         }
     }

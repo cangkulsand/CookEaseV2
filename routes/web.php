@@ -1,28 +1,26 @@
 <?php
 
-use App\Jobs\GenerateRecipesJob;
-use App\Models\Recipe;
-use App\Models\Review;
-use App\Models\Favorite;
-use App\Models\MealPlan;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BMIController;
-use Illuminate\Support\Facades\Artisan;
-use App\Http\Controllers\RecipeController;
-use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\GenerateController;
-use App\Http\Controllers\MealPlanController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HealthGoalController;
 use App\Http\Controllers\IngredientController;
-use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\MealPlanController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\SocialAuthController;
+use App\Jobs\GenerateRecipesJob;
+use App\Models\Favorite;
+use App\Models\MealPlan;
+use App\Models\Recipe;
+use App\Models\Review;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Route;
 
 // Authenticated user routes
 Route::middleware(['auth'])->group(function () {
@@ -76,7 +74,7 @@ Route::middleware(['auth'])->group(function () {
                 $recipes = session('generated_recipes', []);
             }
 
-            if (!isset($recipes[$index])) {
+            if (! isset($recipes[$index])) {
                 abort(404);
             }
             $recipe = $recipes[$index];
@@ -90,7 +88,6 @@ Route::middleware(['auth'])->group(function () {
                 ? $recipe['groceryLists']
                 : json_decode($recipe['groceryLists'], true) ?? [];
 
-
             $existing = Recipe::where('name', $recipe['name'])
                 ->where('description', $recipe['description'])
                 ->first();
@@ -100,8 +97,8 @@ Route::middleware(['auth'])->group(function () {
 
                 // Auto-remove past meal plans for this user
                 MealPlan::where('user_id', $user->id)
-                ->whereDate('date', '<', now()->toDateString())
-                ->delete();
+                    ->whereDate('date', '<', now()->toDateString())
+                    ->delete();
 
                 $isFavorited = Favorite::where('user_id', $user->id)
                     ->where('recipe_id', $recipeId)
@@ -158,8 +155,8 @@ Route::middleware(['auth'])->group(function () {
         if ($user) {
             // Auto-remove past meal plans for this user
             MealPlan::where('user_id', $user->id)
-            ->whereDate('date', '<', now()->toDateString())
-            ->delete();
+                ->whereDate('date', '<', now()->toDateString())
+                ->delete();
 
             $isFavorited = Favorite::where('user_id', $user->id)
                 ->where('recipe_id', $recipe->id)
@@ -206,34 +203,35 @@ Route::middleware(['auth'])->group(function () {
     // Notifications mark as read route
     Route::patch('/notifications/{notificationId}/mark', [MealPlanController::class, 'markNotificationAsRead'])
         ->middleware('auth')
-        ->name('notifications.mark'); 
+        ->name('notifications.mark');
 });
 
 Route::get('/run-migrations', function () {
     try {
         Artisan::call('migrate', ['--force' => true]);
+
         return Artisan::output();  // Show artisan output directly
     } catch (\Throwable $e) {
         return response()->make(
-            "<h2>❌ Error running migration:</h2><pre>" . $e->getMessage() . "</pre><hr><pre>" . $e->getTraceAsString() . "</pre>",
+            '<h2>❌ Error running migration:</h2><pre>'.$e->getMessage().'</pre><hr><pre>'.$e->getTraceAsString().'</pre>',
             500
         );
     }
 });
 
 // Landing and OAuth
-Route::get('/', fn() => redirect()->route('login'));
+Route::get('/', fn () => redirect()->route('login'));
 
 Route::get('auth/google', [SocialAuthController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
 
 // Dashboard
-Route::get('/dashboard', fn() => view('dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', fn () => view('dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth'])->name('dashboard');
 
 // Dev-only testing view (optional)
-Route::get('/test-filters', fn() => view('test-filters'));
+Route::get('/test-filters', fn () => view('test-filters'));
 Route::get('/send-meal-notifications', [NotificationController::class, 'sendTodayMealPlanNotifications']);
 
 // Require auth routes generated by Breeze or your auth scaffolding
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

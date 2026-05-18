@@ -3,53 +3,53 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class GenerateController extends Controller
 {
     public function process(Request $request)
     {
         $userId = Auth::id();
-        $rawIngredients = $request->input('ingredients'); {
-            $userId = Auth::id();
-            $rawIngredients = $request->input('ingredients');
+        $rawIngredients = $request->input('ingredients');
+        $userId = Auth::id();
+        $rawIngredients = $request->input('ingredients');
 
-            // Decode Tagify input if it's in JSON format (e.g. [{"value":"chicken"}, {"value":"tofu"}])
-            $ingredientsArray = collect(json_decode($rawIngredients, true))
-                ->pluck('value')
-                ->map(fn($item) => trim(strtolower($item)))
-                ->filter()
-                ->unique()
-                ->toArray();
+        // Decode Tagify input if it's in JSON format (e.g. [{"value":"chicken"}, {"value":"tofu"}])
+        $ingredientsArray = collect(json_decode($rawIngredients, true))
+            ->pluck('value')
+            ->map(fn ($item) => trim(strtolower($item)))
+            ->filter()
+            ->unique()
+            ->toArray();
 
-            foreach ($ingredientsArray as $ingredientName) {
-                // Check if ingredient exists
-                $ingredient = DB::table('ingredients')->where('name', $ingredientName)->first();
+        foreach ($ingredientsArray as $ingredientName) {
+            // Check if ingredient exists
+            $ingredient = DB::table('ingredients')->where('name', $ingredientName)->first();
 
-                if (!$ingredient) {
-                    // Insert new ingredient
-                    $ingredientId = DB::table('ingredients')->insertGetId([
-                        'name' => $ingredientName,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                } else {
-                    $ingredientId = $ingredient->id;
-                }
-
-                // Insert usage record
-                DB::table('ingredient_usage')->insert([
-                    'user_id' => $userId,
-                    'ingredient_id' => $ingredientId,
-                    'used_at' => now(),
+            if (! $ingredient) {
+                // Insert new ingredient
+                $ingredientId = DB::table('ingredients')->insertGetId([
+                    'name' => $ingredientName,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
+            } else {
+                $ingredientId = $ingredient->id;
             }
 
-            return back()->with('message', 'Ingredients saved successfully.');
+            // Insert usage record
+            DB::table('ingredient_usage')->insert([
+                'user_id' => $userId,
+                'ingredient_id' => $ingredientId,
+                'used_at' => now(),
+            ]);
         }
 
+        return back()->with('message', 'Ingredients saved successfully.');
+
     }
+
     public function showForm()
     {
         $userId = Auth::id(); // safer kalau Auth::user() not logged in

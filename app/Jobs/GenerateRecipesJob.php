@@ -16,6 +16,7 @@ class GenerateRecipesJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $tries = 1;
+
     public int $timeout = 90;
 
     public function __construct(
@@ -34,16 +35,17 @@ class GenerateRecipesJob implements ShouldQueue
     {
         $apiKey = config('services.groq.key');
 
-        if (!$apiKey) {
+        if (! $apiKey) {
             $this->writeFailure('AI service is currently unavailable. Please contact the admin.');
+
             return;
         }
 
         $response = Http::timeout(60)->withHeaders([
-            'Authorization' => 'Bearer ' . $apiKey,
-            'Content-Type'  => 'application/json',
+            'Authorization' => 'Bearer '.$apiKey,
+            'Content-Type' => 'application/json',
         ])->post('https://api.groq.com/openai/v1/chat/completions', [
-            'model'    => 'meta-llama/llama-4-scout-17b-16e-instruct',
+            'model' => 'meta-llama/llama-4-scout-17b-16e-instruct',
             'messages' => [
                 ['role' => 'user', 'content' => $this->prompt],
             ],
@@ -52,8 +54,9 @@ class GenerateRecipesJob implements ShouldQueue
         $json = $response->json();
 
         if (isset($json['error'])) {
-            Log::error('Groq API error: ' . $json['error']['message']);
-            $this->writeFailure('Failed to generate recipe: ' . $json['error']['message']);
+            Log::error('Groq API error: '.$json['error']['message']);
+            $this->writeFailure('Failed to generate recipe: '.$json['error']['message']);
+
             return;
         }
 
@@ -65,9 +68,10 @@ class GenerateRecipesJob implements ShouldQueue
         }
 
         $recipes = json_decode($aiContent, true);
-        if (!is_array($recipes)) {
+        if (! is_array($recipes)) {
             Log::error('AI returned non-array content', ['content' => $aiContent]);
             $this->writeFailure('AI did not return usable recipe data.');
+
             return;
         }
 
@@ -77,22 +81,22 @@ class GenerateRecipesJob implements ShouldQueue
         unset($recipe);
 
         Cache::put(self::cacheKey($this->userId, $this->generationId), [
-            'status'           => 'complete',
-            'recipes'          => $recipes,
+            'status' => 'complete',
+            'recipes' => $recipes,
             'ingredients_used' => $this->ingredientsText,
         ], now()->addHour());
     }
 
     public function failed(\Throwable $exception): void
     {
-        Log::error('GenerateRecipesJob exception: ' . $exception->getMessage());
+        Log::error('GenerateRecipesJob exception: '.$exception->getMessage());
         $this->writeFailure('An error occurred while contacting the AI service.');
     }
 
     protected function writeFailure(string $message): void
     {
         Cache::put(self::cacheKey($this->userId, $this->generationId), [
-            'status'  => 'failed',
+            'status' => 'failed',
             'message' => $message,
         ], now()->addHour());
     }
@@ -105,19 +109,19 @@ class GenerateRecipesJob implements ShouldQueue
 
         try {
             $response = Http::timeout(10)->get('https://pixabay.com/api/', [
-                'key'         => config('services.pixabay.key'),
-                'q'           => $query,
-                'image_type'  => 'photo',
-                'category'    => 'food',
-                'safesearch'  => true,
-                'per_page'    => 3,
+                'key' => config('services.pixabay.key'),
+                'q' => $query,
+                'image_type' => 'photo',
+                'category' => 'food',
+                'safesearch' => true,
+                'per_page' => 3,
             ]);
 
             if ($response->successful() && isset($response['hits'][0]['webformatURL'])) {
                 return $response['hits'][0]['webformatURL'];
             }
         } catch (\Throwable $e) {
-            Log::warning('Pixabay fetch failed for "' . $query . '": ' . $e->getMessage());
+            Log::warning('Pixabay fetch failed for "'.$query.'": '.$e->getMessage());
         }
 
         return asset('images/placeholder.jpg');

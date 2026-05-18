@@ -24,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         // Add the 'review' column back if you want to rollback this migration
-        if (!Schema::hasColumn('reviews', 'review')) {
+        if (! Schema::hasColumn('reviews', 'review')) {
             Schema::table('reviews', function (Blueprint $table) {
                 $table->text('review')->nullable();
             });

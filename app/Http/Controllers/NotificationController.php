@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\MealPlan;
+use App\Models\User;
 use App\Notifications\DailyMealPlanReminder;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {

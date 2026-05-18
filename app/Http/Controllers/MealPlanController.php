@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use App\Models\Recipe;
 use App\Models\MealPlan;
+use App\Models\Recipe;
+use App\Notifications\DailyMealPlanReminder;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
-use App\Notifications\DailyMealPlanReminder;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 
 class MealPlanController extends Controller
 {
     // Show meal plan for selected day
-   public function index(Request $request)
+    public function index(Request $request)
     {
         $userId = Auth::id();
 
@@ -31,7 +31,7 @@ class MealPlanController extends Controller
         // Get selected date from query, else fallback smartly
         $selectedDate = $request->input('date');
 
-        if (!$selectedDate || !in_array($selectedDate, $availableDates)) {
+        if (! $selectedDate || ! in_array($selectedDate, $availableDates)) {
             $selectedDate = $availableDates[0] ?? Carbon::today()->toDateString(); // fallback to today if no plans
         }
 
@@ -53,7 +53,6 @@ class MealPlanController extends Controller
         ]);
     }
 
-
     public function storeMeal(Request $request)
     {
         $request->validate([
@@ -72,7 +71,7 @@ class MealPlanController extends Controller
                 $filename = "recipes/{$hashedName}.jpg";
 
                 // Only download if it doesn't exist
-                if (!Storage::disk('public')->exists($filename)) {
+                if (! Storage::disk('public')->exists($filename)) {
                     $imageContent = Http::get($imageUrl)->body();
                     Storage::disk('public')->put($filename, $imageContent);
                 }
@@ -80,26 +79,26 @@ class MealPlanController extends Controller
                 $localImagePath = Storage::url($filename); // /storage/recipes/xxxx.jpg
             }
         } catch (\Exception $e) {
-            Log::error('Failed to download recipe image: ' . $e->getMessage());
+            Log::error('Failed to download recipe image: '.$e->getMessage());
             $localImagePath = 'https://via.placeholder.com/300x200';
         }
 
         $recipe = Recipe::firstOrCreate(
             ['name' => $data['name'], 'description' => $data['description']],
             [
-                'duration'       => $data['duration'] ?? null,
-                'servings'       => $data['servings'] ?? null,
-                'difficulty'     => $data['difficulty'] ?? 'easy',
-                'calories'       => $data['calories'] ?? null,
+                'duration' => $data['duration'] ?? null,
+                'servings' => $data['servings'] ?? null,
+                'difficulty' => $data['difficulty'] ?? 'easy',
+                'calories' => $data['calories'] ?? null,
                 'image' => $localImagePath,
-                'ingredients'    => json_encode($data['ingredients']),
-                'instructions'   => $data['instructions'],
-                'grocery_lists'  => json_encode($data['groceryLists']),
+                'ingredients' => json_encode($data['ingredients']),
+                'instructions' => $data['instructions'],
+                'grocery_lists' => json_encode($data['groceryLists']),
             ]
         );
 
         MealPlan::create([
-            'user_id'   => Auth::id(),
+            'user_id' => Auth::id(),
             'recipe_id' => $recipe->id,
             'meal_type' => $data['meal_type'],
             'date' => $data['date'],
@@ -122,7 +121,6 @@ class MealPlanController extends Controller
             'meal_type' => 'required|in:breakfast,lunch,dinner,snack',
         ]);
 
-    
         $mealPlan = MealPlan::create([
             'user_id' => Auth::id(),
             'recipe_id' => $request->recipe_id,
@@ -154,8 +152,6 @@ class MealPlanController extends Controller
             'meal_type' => 'required|in:breakfast,lunch,dinner,snack',
         ]);
 
-
-
         $duplicate = MealPlan::where('user_id', Auth::id())
             ->whereDate('date', $request->date)
             ->where('meal_type', $request->meal_type)
@@ -167,7 +163,7 @@ class MealPlanController extends Controller
         if ($duplicate) {
             return response()->json([
                 'success' => false,
-                'message' => 'This recipe has already been added for ' . ucfirst($request->meal_type) . ' on this date.'
+                'message' => 'This recipe has already been added for '.ucfirst($request->meal_type).' on this date.',
             ], 422);
         }
 
@@ -239,14 +235,13 @@ class MealPlanController extends Controller
         return back()->with('message', 'Meal removed successfully.');
     }
 
-
     public function markNotificationAsRead($notificationId)
     {
         $user = auth()->user();
 
         $notification = $user->notifications()->find($notificationId);
 
-        if (!$notification) {
+        if (! $notification) {
             return redirect()->back()->with('error', 'Notification not found.');
         }
 

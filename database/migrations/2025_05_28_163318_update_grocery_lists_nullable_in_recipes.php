@@ -22,5 +22,4 @@ return new class extends Migration
             $table->json('grocery_lists')->nullable(false)->change();
         });
     }
-
 };

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasColumn('reviews', 'comment')) {
+        if (! Schema::hasColumn('reviews', 'comment')) {
             Schema::table('reviews', function (Blueprint $table) {
                 $table->text('comment')->after('rating');
             });

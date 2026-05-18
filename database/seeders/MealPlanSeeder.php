@@ -6,7 +6,6 @@ use App\Models\MealPlan;
 use App\Models\Recipe;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class MealPlanSeeder extends Seeder
@@ -19,8 +18,9 @@ class MealPlanSeeder extends Seeder
         $user = User::first();
         $recipes = Recipe::all();
 
-        if (!$user || $recipes->count() < 3) {
+        if (! $user || $recipes->count() < 3) {
             $this->command->info('Make sure you have at least 1 user and 3 recipes seeded.');
+
             return;
         }
 
@@ -35,9 +35,9 @@ class MealPlanSeeder extends Seeder
         foreach ($dates as $i => $date) {
             foreach ($mealTypes as $j => $type) {
                 MealPlan::create([
-                    'user_id'   => $user->id,
+                    'user_id' => $user->id,
                     'recipe_id' => $recipes->random()->id,
-                    'date'      => $date,
+                    'date' => $date,
                     'meal_type' => $type,
                 ]);
             }

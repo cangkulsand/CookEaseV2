@@ -9,22 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up()
-{
-    Schema::table('recipes', function (Blueprint $table) {
-        $table->json('ingredients')->nullable()->change();
-    });
-}
-
+    public function up()
+    {
+        Schema::table('recipes', function (Blueprint $table) {
+            $table->json('ingredients')->nullable()->change();
+        });
+    }
 
     /**
      * Reverse the migrations.
      */
     public function down()
-{
-    Schema::table('recipes', function (Blueprint $table) {
-        $table->json('ingredients')->nullable(false)->change();
-    });
-}
-
+    {
+        Schema::table('recipes', function (Blueprint $table) {
+            $table->json('ingredients')->nullable(false)->change();
+        });
+    }
 };

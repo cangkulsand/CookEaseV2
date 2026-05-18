@@ -13,7 +13,7 @@ class MealPlan extends Model
         'user_id',
         'recipe_id',
         'date',
-        'meal_type'
+        'meal_type',
     ];
 
     public function user()

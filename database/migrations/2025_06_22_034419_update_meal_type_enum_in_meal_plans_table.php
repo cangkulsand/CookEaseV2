@@ -16,5 +16,4 @@ return new class extends Migration
         // Step 3: Remove 'others' from the enum
         DB::statement("ALTER TABLE meal_plans MODIFY meal_type ENUM('breakfast', 'lunch', 'dinner', 'snack') NOT NULL");
     }
-
 };

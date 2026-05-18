@@ -20,7 +20,10 @@ COPY . .
 RUN rm -rf node_modules public/build resources/js/.vite
 
 # Install PHP and Node dependencies
-RUN composer install --optimize-autoloader --no-dev
+# NOTE: dev dependencies (Pint, Pest, etc.) are intentionally included here
+# because this Dockerfile is the local-dev image. A separate Dockerfile.prod
+# will exclude dev deps for production builds (see docs/devops-with-docker.md §5).
+RUN composer install --optimize-autoloader
 RUN npm install && npm run build
 
 # Fix permissions

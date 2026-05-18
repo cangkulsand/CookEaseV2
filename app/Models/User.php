@@ -48,7 +48,7 @@ class User extends Authenticatable
 
     public function bmi()
     {
-        return $this->hasOne(Bmi::class)->latestOfMany(); 
+        return $this->hasOne(Bmi::class)->latestOfMany();
     }
 
     public function healthGoal()
@@ -65,6 +65,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(MealPlan::class);
     }
-
 }
-

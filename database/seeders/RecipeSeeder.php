@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Recipe;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class RecipeSeeder extends Seeder
@@ -14,32 +13,32 @@ class RecipeSeeder extends Seeder
     public function run(): void
     {
         Recipe::create([
-            'name'       => 'Nasi Lemak',
+            'name' => 'Nasi Lemak',
             'description' => 'A traditional Malaysian dish with coconut rice, sambal, and fried anchovies.',
-            'duration'    => '45 minutes',
-            'difficulty'  => 'medium',
-            'calories'    => 600,
-            'image'       => 'https://cdn.pixabay.com/photo/2015/03/04/12/09/food-658715_1280.jpg',
+            'duration' => '45 minutes',
+            'difficulty' => 'medium',
+            'calories' => 600,
+            'image' => 'https://cdn.pixabay.com/photo/2015/03/04/12/09/food-658715_1280.jpg',
             'ingredients' => json_encode([
                 '2 cups rice',
                 '1 cup coconut milk',
                 '100g anchovies',
-                '2pcs boiled eggs'
+                '2pcs boiled eggs',
             ]),
-            'instructions' => "Wash the rice and soak for 30 minutes. Cook rice with coconut milk and a pinch of salt. Fry anchovies until crispy. Serve with boiled eggs, cucumber, and sambal.",
+            'instructions' => 'Wash the rice and soak for 30 minutes. Cook rice with coconut milk and a pinch of salt. Fry anchovies until crispy. Serve with boiled eggs, cucumber, and sambal.',
             'grocery_lists' => json_encode([
-                'rice', 'coconut milk', 'anchovies', 'eggs', 'cucumber'
+                'rice', 'coconut milk', 'anchovies', 'eggs', 'cucumber',
             ]),
-         
+
         ]);
 
         Recipe::create([
-            'name'       => 'Chicken Rendang',
+            'name' => 'Chicken Rendang',
             'description' => 'Spicy and flavorful chicken curry cooked with coconut milk and spices.',
-            'duration'    => '1 hour 30 minutes',
-            'difficulty'  => 'hard',
-            'calories'    => 750,
-            'image'       => 'https://cdn.pixabay.com/photo/2021/07/07/05/56/rendang-6393322_1280.jpg',
+            'duration' => '1 hour 30 minutes',
+            'difficulty' => 'hard',
+            'calories' => 750,
+            'image' => 'https://cdn.pixabay.com/photo/2021/07/07/05/56/rendang-6393322_1280.jpg',
             'ingredients' => json_encode([
                 '1 whole chicken (cut into pieces)',
                 '2 cups coconut milk',
@@ -51,14 +50,14 @@ class RecipeSeeder extends Seeder
                 '2pcs onion',
                 '1 inch ginger',
                 '1 tsp salt',
-                '2 tbsp cooking oil'
+                '2 tbsp cooking oil',
             ]),
-            'instructions' => "Blend onion, garlic, ginger, and galangal into a smooth paste. Heat oil in a pot and sauté the blended paste until fragrant. Add chicken pieces and cook until lightly browned. Add coconut milk, lemongrass, and all spices. Stir well. Serve hot with steamed rice.",
+            'instructions' => 'Blend onion, garlic, ginger, and galangal into a smooth paste. Heat oil in a pot and sauté the blended paste until fragrant. Add chicken pieces and cook until lightly browned. Add coconut milk, lemongrass, and all spices. Stir well. Serve hot with steamed rice.',
             'grocery_lists' => json_encode([
                 'chicken', 'coconut milk', 'lemongrass', 'galangal', 'turmeric powder',
-                'coriander powder', 'garlic', 'onion', 'ginger', 'salt', 'cooking oil'
+                'coriander powder', 'garlic', 'onion', 'ginger', 'salt', 'cooking oil',
             ]),
-            
+
         ]);
 
         Recipe::create([
@@ -79,9 +78,9 @@ class RecipeSeeder extends Seeder
                 '1 tablespoon soy sauce',
                 '1 tablespoon ketchup',
                 '1 egg',
-                'Lime wedges (for garnish)'
+                'Lime wedges (for garnish)',
             ]),
-            'instructions' => "Heat oil in a wok. Sauté garlic until fragrant. Add chili paste, tofu, and potato slices. Stir-fry for 2 minutes. Add noodles, soy sauce, ketchup, and mix well. Push noodles aside and scramble the egg. Add bean sprouts and stir everything together. Serve hot with lime wedges.",
+            'instructions' => 'Heat oil in a wok. Sauté garlic until fragrant. Add chili paste, tofu, and potato slices. Stir-fry for 2 minutes. Add noodles, soy sauce, ketchup, and mix well. Push noodles aside and scramble the egg. Add bean sprouts and stir everything together. Serve hot with lime wedges.',
             'grocery_lists' => json_encode([
                 'yellow noodles',
                 'fried tofu',
@@ -92,9 +91,9 @@ class RecipeSeeder extends Seeder
                 'soy sauce',
                 'ketchup',
                 'egg',
-                'lime'
+                'lime',
             ]),
-            
+
         ]);
 
         Recipe::create([
@@ -115,9 +114,9 @@ class RecipeSeeder extends Seeder
                 '1 cinnamon stick',
                 '2 star anise',
                 '1/2 cup water',
-                'Salt and sugar to taste'
+                'Salt and sugar to taste',
             ]),
-            'instructions' => "Fry the chicken until golden brown and set aside. In the same oil, sauté onion, garlic, ginger, cinnamon, and star anise until fragrant. Add chili paste and tomato puree, cook until oil separates. Add fried chicken and water. Simmer until sauce thickens. Season with salt and sugar. Serve hot.",
+            'instructions' => 'Fry the chicken until golden brown and set aside. In the same oil, sauté onion, garlic, ginger, cinnamon, and star anise until fragrant. Add chili paste and tomato puree, cook until oil separates. Add fried chicken and water. Simmer until sauce thickens. Season with salt and sugar. Serve hot.',
             'grocery_lists' => json_encode([
                 'chicken',
                 'chili paste',
@@ -128,9 +127,9 @@ class RecipeSeeder extends Seeder
                 'cinnamon stick',
                 'star anise',
                 'salt',
-                'sugar'
+                'sugar',
             ]),
-            
+
         ]);
     }
 }

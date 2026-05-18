@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Review;
 use App\Models\Favorite;
+use App\Models\Review;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
@@ -22,7 +22,7 @@ class ReviewController extends Controller
             ->where('recipe_id', $request->recipe_id)
             ->exists();
 
-        if (!$hasSaved) {
+        if (! $hasSaved) {
             return back()->with('message', 'Please save this recipe first before leaving a review.');
         }
 

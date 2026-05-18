@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Favorite;
 use App\Models\Recipe;
 use App\Models\Review;
-use App\Models\Favorite;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class RecipeController extends Controller
@@ -19,9 +18,9 @@ class RecipeController extends Controller
         $query = Recipe::query();
 
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                ->orWhere('description', 'like', '%' . $request->search . '%');
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('description', 'like', '%'.$request->search.'%');
             });
         }
 
@@ -38,6 +37,7 @@ class RecipeController extends Controller
         }
 
         $recipes = $query->latest()->paginate(9)->appends($request->all());
+
         return view('browse-recipes', compact('recipes'));
     }
 
@@ -58,7 +58,7 @@ class RecipeController extends Controller
                 $filename = "recipes/{$hashedName}.jpg";
 
                 // Only download if it doesn't exist
-                if (!Storage::disk('public')->exists($filename)) {
+                if (! Storage::disk('public')->exists($filename)) {
                     $imageContent = Http::get($imageUrl)->body();
                     Storage::disk('public')->put($filename, $imageContent);
                 }
@@ -66,7 +66,7 @@ class RecipeController extends Controller
                 $localImagePath = Storage::url($filename); // /storage/recipes/xxxx.jpg
             }
         } catch (\Exception $e) {
-            Log::error('Failed to download recipe image: ' . $e->getMessage());
+            Log::error('Failed to download recipe image: '.$e->getMessage());
             $localImagePath = 'https://via.placeholder.com/300x200';
         }
 
@@ -92,7 +92,7 @@ class RecipeController extends Controller
 
         return redirect()->route('recipe.detail', [
             'index' => $recipe->id,
-            'from' => 'db'
+            'from' => 'db',
         ])->with('message', 'Recipe saved to favorites!');
     }
 
@@ -112,8 +112,8 @@ class RecipeController extends Controller
     {
         $recipe = Recipe::findOrFail($id);
         $reviews = Review::where('recipe_id', $id)->get();
+
         return view('recipe-detail', compact('recipe', 'reviews'));
 
     }
-
 }

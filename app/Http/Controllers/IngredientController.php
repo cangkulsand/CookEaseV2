@@ -16,6 +16,7 @@ class IngredientController extends Controller
     {
         // Get all ingredient names from database
         $ingredients = DB::table('ingredients')->pluck('name');
+
         return response()->json($ingredients);
     }
 
@@ -43,7 +44,7 @@ class IngredientController extends Controller
 
         // ✅ Load existing ingredients
         $allowedIngredients = DB::table('ingredients')->pluck('name')
-            ->map(fn($n) => strtolower($n))
+            ->map(fn ($n) => strtolower($n))
             ->toArray();
 
         $cleanedIngredients = [];
@@ -52,7 +53,7 @@ class IngredientController extends Controller
             $ingredient = trim(strtolower($ingredient));
 
             // Auto-save if new
-            if (!in_array($ingredient, $allowedIngredients)) {
+            if (! in_array($ingredient, $allowedIngredients)) {
                 DB::table('ingredients')->insert([
                     'name' => $ingredient,
                     'created_at' => now(),
@@ -97,7 +98,6 @@ class IngredientController extends Controller
             ->limit(5)
             ->get();
 
-
         // ✅ Prepare for AI
         $ingredients = implode(', ', $cleanedIngredients);
         $filters = $validated['filters'] ?? [];
@@ -105,27 +105,32 @@ class IngredientController extends Controller
         $budget = $validated['budget'] ?? '';
         $apiKey = config('services.groq.key');
 
-        if (!$apiKey) {
+        if (! $apiKey) {
             Log::error('Groq API key is missing.');
+
             return back()->with('message', 'AI service is currently unavailable. Please contact the admin.');
         }
 
         $user = Auth::user();
         $bmiRecord = $user->bmi;
         $bmiValue = $bmiRecord ? $bmiRecord->getBmiAttribute() : null;
-        $bmiCategory = $bmiRecord ? $bmiRecord->getBmiCategory() : null;;
+        $bmiCategory = $bmiRecord ? $bmiRecord->getBmiCategory() : null;
 
         $filterText = implode(', ', $filters);
 
         $extraInfo = '';
-        if ($filterText)
+        if ($filterText) {
             $extraInfo .= " Take into account these preferences: $filterText.";
-        if ($cookingTime)
+        }
+        if ($cookingTime) {
             $extraInfo .= " Try to keep the cooking time around $cookingTime.";
-        if ($budget)
+        }
+        if ($budget) {
             $extraInfo .= " Ensure the recipes fit a $budget budget.";
-        if ($bmiValue)
+        }
+        if ($bmiValue) {
             $extraInfo .= " The user has a BMI of $bmiValue ($bmiCategory), so recommend recipes that support a healthy diet for this condition.";
+        }
 
         $prompt = <<<PROMPT
 Generate 12 Malaysian recipes using the following ingredients: $ingredients.$extraInfo
@@ -164,7 +169,7 @@ PROMPT;
     {
         $cached = Cache::get(GenerateRecipesJob::cacheKey(Auth::id(), $generationId));
 
-        if (!$cached) {
+        if (! $cached) {
             return redirect()->route('generate')->with('message', 'Recipe generation not found. Please try again.');
         }
 
@@ -185,7 +190,7 @@ PROMPT;
     {
         $cached = Cache::get(GenerateRecipesJob::cacheKey(Auth::id(), $generationId));
 
-        if (!$cached) {
+        if (! $cached) {
             return response()->json(['status' => 'missing'], 404);
         }
 
@@ -204,18 +209,18 @@ PROMPT;
     {
         $cached = Cache::get(GenerateRecipesJob::cacheKey(Auth::id(), $generationId));
 
-        if (!$cached || ($cached['status'] ?? null) !== 'complete') {
+        if (! $cached || ($cached['status'] ?? null) !== 'complete') {
             return redirect()->route('generate')->with('message', 'No recipe found. Please try again.');
         }
 
-        $recentIngredients   = $this->getGroupedIngredientData(Auth::id())['recent']   ?? [];
+        $recentIngredients = $this->getGroupedIngredientData(Auth::id())['recent'] ?? [];
         $frequentIngredients = $this->getGroupedIngredientData(Auth::id())['frequent'] ?? [];
 
         return view('generate-results', [
-            'recipes'             => $cached['recipes'],
-            'ingredients'         => $cached['ingredients_used'] ?? '',
-            'generationId'        => $generationId,
-            'recentIngredients'   => $recentIngredients,
+            'recipes' => $cached['recipes'],
+            'ingredients' => $cached['ingredients_used'] ?? '',
+            'generationId' => $generationId,
+            'recentIngredients' => $recentIngredients,
             'frequentIngredients' => $frequentIngredients,
         ]);
     }
@@ -224,13 +229,13 @@ PROMPT;
     {
         return response()->json([
             [
-                'name'  => '🕑 Recently Used',
-                'items' => array_map(fn($i) => ['value' => $i], $this->getGroupedIngredientData(Auth::id())['recent'])
+                'name' => '🕑 Recently Used',
+                'items' => array_map(fn ($i) => ['value' => $i], $this->getGroupedIngredientData(Auth::id())['recent']),
             ],
             [
-                'name'  => '🔥 Frequently Used',
-                'items' => array_map(fn($i) => ['value' => $i], $this->getGroupedIngredientData(Auth::id())['frequent'])
-            ]
+                'name' => '🔥 Frequently Used',
+                'items' => array_map(fn ($i) => ['value' => $i], $this->getGroupedIngredientData(Auth::id())['frequent']),
+            ],
         ]);
     }
 
@@ -264,24 +269,33 @@ PROMPT;
         $filterText = implode(', ', $filters);
         $healthGoal = $user->healthGoal->goal ?? null;
 
-        if ($filterText)  $extraInfo .= " Take into account these preferences: $filterText.";
-        if ($healthGoal)  $extraInfo .= " The user's health goal is $healthGoal, so recommend recipes that support a healthy diet for this.";
-        if ($validated['cooking_time']) $extraInfo .= " Try to keep the cooking time around {$validated['cooking_time']}.";
-        if ($validated['budget']) $extraInfo .= " Ensure the recipes fit a {$validated['budget']} budget.";
+        if ($filterText) {
+            $extraInfo .= " Take into account these preferences: $filterText.";
+        }
+        if ($healthGoal) {
+            $extraInfo .= " The user's health goal is $healthGoal, so recommend recipes that support a healthy diet for this.";
+        }
+        if ($validated['cooking_time']) {
+            $extraInfo .= " Try to keep the cooking time around {$validated['cooking_time']}.";
+        }
+        if ($validated['budget']) {
+            $extraInfo .= " Ensure the recipes fit a {$validated['budget']} budget.";
+        }
 
         $bmi = $user->bmi;
         if ($bmi) {
             $bmiValue = $bmi->getBmiAttribute();
             $category = 'normal';
-            if ($bmiValue < 18.5) $category = 'underweight';
-            elseif ($bmiValue >= 25) $category = 'overweight';
-            elseif ($bmiValue >= 30) $category = 'obese';
+            if ($bmiValue < 18.5) {
+                $category = 'underweight';
+            } elseif ($bmiValue >= 25) {
+                $category = 'overweight';
+            } elseif ($bmiValue >= 30) {
+                $category = 'obese';
+            }
             $extraInfo .= " The user has a BMI of $bmiValue ($category), so recommend recipes that support a healthy diet for this condition.";
         }
 
         return $extraInfo;
     }
-
-
-
 }

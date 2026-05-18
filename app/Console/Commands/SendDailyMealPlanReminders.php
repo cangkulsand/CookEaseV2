@@ -2,15 +2,16 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Models\User;
 use App\Models\MealPlan;
+use App\Models\User;
 use App\Notifications\DailyMealPlanReminder;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class SendDailyMealPlanReminders extends Command
 {
     protected $signature = 'mealplan:notify';
+
     protected $description = 'Send daily meal plan reminders to users';
 
     public function handle()

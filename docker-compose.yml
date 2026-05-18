@@ -17,7 +17,9 @@ services:
       mysql:
         condition: service_healthy
     volumes:
-      - ./storage:/var/www/storage
+      - ./:/var/www                       # live-mount your code into the container (dev mode)
+      - /var/www/vendor                   # keep container's vendor (not host's)
+      - /var/www/node_modules             # keep container's node_modules (not host's)
     networks: [cookease]
 
   mysql:

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Services\CalorieCalculator; 
 use App\Models\Bmi;
 use App\Models\HealthGoal;
+use App\Services\CalorieCalculator;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HealthGoalController extends Controller
 {
@@ -61,7 +61,7 @@ class HealthGoalController extends Controller
             // fallback in case goal didn't exist
             $healthGoal = HealthGoal::create([
                 'user_id' => $user->id,
-                'goal' => $request->goal
+                'goal' => $request->goal,
             ]);
         }
 
@@ -75,4 +75,3 @@ class HealthGoalController extends Controller
 
     }
 }
-

@@ -13,8 +13,6 @@ class IngredientSeeder extends Seeder
     public function run(): void
     {
 
-        
-
         $ingredients = [
             // Proteins
             'chicken', 'beef', 'fish', 'tofu', 'shrimp', 'duck', 'squid', 'clams', 'anchovies', 'mackerel', 'sardine', 'crab',
@@ -29,21 +27,15 @@ class IngredientSeeder extends Seeder
             'rice', 'coconut milk', 'chili', 'tamarind', 'soy sauce', 'oyster sauce', 'fish sauce', 'palm sugar', 'vinegar', 'sambal', 'peanuts', 'coconut',
 
             // Carbs & Staples
-            'vermicelli noodles', 'yellow noodles', 'rice noodles', 'glutinous rice', 'roti'
+            'vermicelli noodles', 'yellow noodles', 'rice noodles', 'glutinous rice', 'roti',
         ];
 
-
         foreach ($ingredients as $ingredient) {
-        DB::table('ingredients')->updateOrInsert(
-            ['name' => $ingredient], // condition
-            ['created_at' => now(), 'updated_at' => now()] // update/insert
-        );
+            DB::table('ingredients')->updateOrInsert(
+                ['name' => $ingredient], // condition
+                ['created_at' => now(), 'updated_at' => now()] // update/insert
+            );
         }
 
-
     }
-
-
 }
-
-
