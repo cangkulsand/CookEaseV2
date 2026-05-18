@@ -33,7 +33,8 @@ RUN chown -R www-data:www-data /var/www \
 # Expose port
 EXPOSE 8000
 
-# RUN TIME commands moved here (not build time!)
+# RUN TIME commands (dev image — leaves config uncached so .env / phpunit.xml
+# env overrides work correctly for tests and hot config changes).
 CMD php artisan config:clear && \
     php artisan route:clear && \
     php artisan view:clear && \
@@ -41,7 +42,4 @@ CMD php artisan config:clear && \
     php artisan db:seed --class=RecipeSeeder --force && \
     php artisan db:seed --class=IngredientSeeder --force && \
     php artisan storage:link && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache && \
     php artisan serve --host=0.0.0.0 --port=8000

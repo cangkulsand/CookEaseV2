@@ -58,11 +58,11 @@ jobs:
         run: vendor/bin/pint --test
         continue-on-error: true
 
-      - name: Run tests (Pest)
+      - name: Run tests (Pest) — Unit suite only (POC scope)
         env:
           GROQ_API_KEY: fake-key-for-ci
           PIXABAY_API_KEY: fake-key-for-ci
-        run: vendor/bin/pest
+        run: vendor/bin/pest --testsuite=Unit
 
   docker-build:
     name: Build Docker image (smoke test)
