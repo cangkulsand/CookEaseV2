@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    
-    <title>CookEase</title>
+
+    <title>CookEase - Newly Version</title>
 </head>
 <body>
-    <h1>Welcome to CookEase!</h1>
+    <h1>Welcome to the Newly Version of CookEase!</h1>
     <a href="/login">Login</a> |
-    <a href="/register">Register</a>
+    <a href="/register">Sign Up</a>
 </body>
 </html>
