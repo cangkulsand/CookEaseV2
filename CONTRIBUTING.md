@@ -175,7 +175,8 @@ git push -u origin feature/<name>     # push and create tracking
 |---------|------------|
 | `open //./pipe/dockerDesktopLinuxEngine` error | Docker Desktop isn't running — launch it from Start menu |
 | Tests fail on a fresh clone | `docker compose exec app php artisan config:clear` |
-| Vite assets not loading | `docker compose up -d --build` to rebuild the image |
+| `Vite manifest not found at /var/www/public/build/manifest.json` | Run `docker compose exec app npm run build` — rebuilds Vite assets |
+| Vite assets not loading after a CSS/JS edit | `docker compose exec app npm run build` |
 | Can't push to `main` directly | That's by design — make a branch, push to it, open a PR |
 | PR shows "Review required" | Wait for the head programmer to review and approve |
 
