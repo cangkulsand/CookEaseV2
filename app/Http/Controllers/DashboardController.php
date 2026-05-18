@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -59,9 +60,18 @@ class DashboardController extends Controller
         // Recipe Recommendations (latest recipes from DB)
         $recommendedRecipes = Recipe::latest()->take(4)->get();
 
-        // AI Cooking Tips
+        // AI Cooking Tips — cached per user per day to avoid a Groq call on every dashboard view.
+        // Only successful, non-empty results are cached; failures fall through so the next visit retries.
         $apiError = false;
-        $tips = $this->generateDailyCookingTips($apiError);
+        $cacheKey = "daily_cooking_tips:{$user->id}:" . today()->toDateString();
+        $tips = Cache::get($cacheKey);
+
+        if (!is_array($tips) || empty($tips)) {
+            $tips = $this->generateDailyCookingTips($apiError);
+            if (!$apiError && !empty($tips)) {
+                Cache::put($cacheKey, $tips, now()->endOfDay());
+            }
+        }
 
         return view('dashboard', compact(
             'bmi',

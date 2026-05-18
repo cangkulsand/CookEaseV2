@@ -20,7 +20,7 @@
             @if (isset($messages[$status]))
                 <div x-data="{ show: true }" x-show="show" x-transition
                     x-init="setTimeout(() => show = false, 3000)"
-                    class="mb-4 px-4 py-3 rounded bg-green-100 border border-green-300 text-green-800 text-sm">
+                    class="mb-4 px-4 py-3 rounded bg-primary-100 border border-primary-300 text-primary-800 text-sm">
                     {{ $messages[$status] }}
                 </div>
             @endif

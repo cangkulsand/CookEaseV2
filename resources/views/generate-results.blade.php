@@ -16,7 +16,7 @@
                     @foreach ($recipes as $index => $recipe)
                         <div x-show="{{ $index }} < visible" class="rounded overflow-hidden shadow-lg flex flex-col">
                             <div class="relative h-48 w-full overflow-hidden">
-                                <a href="{{ route('recipe.detail', ['index' => $index, 'from' => 'session']) }}">
+                                <a href="{{ route('recipe.detail', ['index' => $index, 'from' => 'generation', 'id' => $generationId]) }}">
                                     <img 
                                         src="{{ $recipe['image'] }}" 
                                         alt="recipe image"
@@ -26,8 +26,8 @@
                                 </a>
                             </div>
                             <div class="px-6 py-4 mb-auto">
-                                <a href="{{ route('recipe.detail', ['index' => $index, 'from' => 'session']) }}"
-                                   class="font-medium text-lg inline-block hover:text-indigo-600 transition mb-2">
+                                <a href="{{ route('recipe.detail', ['index' => $index, 'from' => 'generation', 'id' => $generationId]) }}"
+                                   class="font-medium text-lg inline-block hover:text-primary-600 transition mb-2">
                                     {{ $recipe['name'] }}
                                 </a>
                                 <p class="text-gray-500 text-sm">{{ $recipe['description'] }}</p>
@@ -46,7 +46,7 @@
                 <div class="flex justify-center mt-8" x-show="visible < {{ $totalRecipes }}">
                     <button 
                         @click="visible += 3" 
-                        class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition"
+                        class="bg-primary-500 text-white px-4 py-2 rounded hover:bg-primary-600 transition"
                     >
                         Show More Recipes
                     </button>

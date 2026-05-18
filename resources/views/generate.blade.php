@@ -15,7 +15,7 @@
                 </h1>
 
                 @if (session('message'))
-                    <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
+                    <div class="mb-4 p-4 bg-primary-100 text-primary-700 rounded">
                         {{ session('message') }}
                     </div>
                 @endif
@@ -31,19 +31,19 @@
                         <div class="relative">
                             <input type="text" name="ingredients" id="ingredients"
                                 placeholder="e.g., chicken, lemongrass, coconut milk"
-                                class="w-full pl-4 pr-20 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                                class="w-full pl-4 pr-20 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-400"
                                 required>
 
                             <div class="absolute inset-y-0 right-0 flex items-center pr-3 space-x-2">
                                 <button type="button" @click="showFilters = !showFilters"
-                                    class="text-gray-500 hover:text-green-600">
+                                    class="text-gray-500 hover:text-primary-600">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 12.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 019 17v-4.586L3.293 6.707A1 1 0 013 6V4z" />
                                     </svg>
                                 </button>
 
-                                <button type="submit" class="text-gray-500 hover:text-green-600">
+                                <button type="submit" class="text-gray-500 hover:text-primary-600">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1116.65 2a7.5 7.5 0 010 14.65z" />
@@ -86,7 +86,7 @@
                     </div>
                     <div class="w-full flex justify-end mt-4">
                         <button type="submit"
-                            class="w-full sm:w-auto px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                            class="w-full sm:w-auto px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
                             Generate Recipe
                         </button>
                     </div>
@@ -102,11 +102,11 @@
                     <div class="flex flex-wrap gap-2 mt-2 text-sm">
                        @foreach(array_unique(array_slice($recentIngredients, 0, 6)) as $index => $item)
 
-                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-blue-200 transition
-                                {{ $index === 0 ? 'ring-2 ring-blue-200 animate-pulse' : '' }}"
+                            <span class="bg-info-100 text-info-800 px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-info-200 transition
+                                {{ $index === 0 ? 'ring-2 ring-info-200 animate-pulse' : '' }}"
                                 onclick="addToTagify('{{ $emojiMap[$item] ?? '' }} {{ $item }}')">
                                 {{ $item }}
-                                <button type="button" class="ml-1 text-red-500 hover:text-red-700"
+                                <button type="button" class="ml-1 text-danger-500 hover:text-danger-700"
                                     onclick="event.stopPropagation(); removeRecent('{{ $item }}')">✖</button>
                             </span>
                         @endforeach
@@ -124,7 +124,7 @@
                     </div>
                 </div>
 
-                <div class="mt-8 p-4 sm:p-6 bg-yellow-100 rounded-lg shadow transition-transform hover:scale-105">
+                <div class="mt-8 p-4 sm:p-6 bg-primary-100 rounded-lg shadow transition-transform hover:scale-105">
                     <div class="flex items-center mb-4">
                         <span class="text-2xl mr-2">🍲</span>
                         <h3 class="text-xl font-bold text-gray-800">Quick Tips</h3>
@@ -233,7 +233,7 @@
     }
 
     function removeRecent(name) {
-        document.querySelectorAll('.text-blue-800').forEach(el => {
+        document.querySelectorAll('.text-info-800').forEach(el => {
             if (el.textContent.includes(name)) {
                 el.remove();
             }

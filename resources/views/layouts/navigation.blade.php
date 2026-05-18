@@ -42,7 +42,7 @@
 
                         @php $count = auth()->user()->unreadNotifications->count(); @endphp
                         @if ($count > 0)
-                            <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold text-white bg-red-500 rounded-full transform translate-x-1/2 -translate-y-1/2">
+                            <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold text-white bg-danger-500 rounded-full transform translate-x-1/2 -translate-y-1/2">
                                 {{ $count }}
                             </span>
                         @endif
@@ -69,7 +69,7 @@
                                         @csrf
                                         @method('PATCH')
                                         <button type="submit"
-                                            class="text-xs text-blue-600 hover:underline ml-2 mt-0.5">
+                                            class="text-xs text-info-600 hover:underline ml-2 mt-0.5">
                                             Mark
                                         </button>
                                     </form>
@@ -121,7 +121,7 @@
 
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-yellow-400 hover:text-yellow-500 hover:bg-yellow-100 focus:outline-none focus:bg-yellow-100 focus:text-yellow-500 transition duration-150 ease-in-out">
+                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-primary-400 hover:text-primary-500 hover:bg-primary-100 focus:outline-none focus:bg-primary-100 focus:text-primary-500 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -162,7 +162,7 @@
                         <form method="POST" action="{{ route('notifications.mark', $notification->id) }}">
                             @csrf
                             @method('PATCH')
-                            <button type="submit" class="text-blue-500 hover:underline text-xs mt-1">Mark as read</button>
+                            <button type="submit" class="text-info-500 hover:underline text-xs mt-1">Mark as read</button>
                         </form>
                     </li>
                 @empty

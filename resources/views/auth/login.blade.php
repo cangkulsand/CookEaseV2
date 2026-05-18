@@ -25,7 +25,7 @@
 
             <!-- Welcome Message -->
             <div class="text-center cursor-default">
-                <div class="text-2xl text-red-600 font-semibold mb-1">Welcome Back 👋</div>
+                <div class="text-2xl text-danger-600 font-semibold mb-1">Welcome Back 👋</div>
                 <div class="text-sm text-gray-500 mb-6">- Cook with Ease -</div>
             </div>
 
@@ -51,19 +51,19 @@
 
                 <!-- Remember Me -->
                 <div class="flex items-center mb-4">
-                    <input id="remember_me" type="checkbox" class="border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
+                    <input id="remember_me" type="checkbox" class="border-gray-300 text-primary-600 shadow-sm focus:ring-primary-500" name="remember">
                     <label for="remember_me" class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</label>
                 </div>
 
                 <!-- Forgot Password & Submit -->
                 <div class="flex flex-col sm:flex-row justify-between items-center">
                     @if (Route::has('password.request'))
-                        <a class="text-sm text-blue-600 hover:underline mb-2 sm:mb-0" href="{{ route('password.request') }}">
+                        <a class="text-sm text-info-600 hover:underline mb-2 sm:mb-0" href="{{ route('password.request') }}">
                             {{ __('Forgot your password?') }}
                         </a>
                     @endif
 
-                    <button type="submit" class="bg-yellow-400 text-black text-sm font-semibold px-6 py-2 rounded hover:bg-yellow-500 transition w-full sm:w-auto">
+                    <button type="submit" class="bg-primary-400 text-black text-sm font-semibold px-6 py-2 rounded hover:bg-primary-500 transition w-full sm:w-auto">
                         Login
                     </button>
                 </div>

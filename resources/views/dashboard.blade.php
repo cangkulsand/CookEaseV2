@@ -12,7 +12,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-4">
-                    <p class="text-black text-2xl sm:text-3xl text-yellow-600 font-bold">Hello,
+                    <p class="text-black text-2xl sm:text-3xl text-primary-600 font-bold">Hello,
                         {{ Auth::user()->name }}!</p>
                     <p class="text-gray-600 text-base sm:text-lg">Ready to cook something delicious?</p>
                 </div>
@@ -66,11 +66,11 @@
                 <div class="flex flex-col space-y-6">
 
                     <!-- Daily Cooking Tips -->
-                    <div class="bg-lime-100 shadow rounded-2xl p-4 flex flex-col h-full">
+                    <div class="bg-primary-100 shadow rounded-2xl p-4 flex flex-col h-full">
                         <h2 class="text-lg sm:text-xl md:text-xl font-semibold mb-4">💡Daily Cooking Tips</h2>
 
                         @if ($apiError)
-                            <div class="text-red-600 text-sm">⚠️ Failed to load tips from AI. Showing default tips.</div>
+                            <div class="text-danger-600 text-sm">⚠️ Failed to load tips from AI. Showing default tips.</div>
                         @endif
 
                         <ul class="space-y-2 list-disc list-inside text-sm text-gray-700 flex-1 mt-2">
@@ -83,11 +83,11 @@
                     </div>
 
                     <!-- Today's Meal Plan -->
-                    <div class="bg-yellow-50 shadow rounded-2xl p-4 flex flex-col h-full">
+                    <div class="bg-primary-50 shadow rounded-2xl p-4 flex flex-col h-full">
                         <div class="flex items-center justify-between mb-4">
                             <h2 class="text-lg sm:text-xl md:text-xl font-semibold">📆 Today's Meal Plan</h2>
                             <a href="{{ route('meal-plan.index') }}"
-                                class="text-sm sm:text-base md:text-base text-blue-600 hover:underline">View All</a>
+                                class="text-sm sm:text-base md:text-base text-info-600 hover:underline">View All</a>
                         </div>
 
                         <ul class="space-y-3 flex-1">
@@ -104,7 +104,7 @@
                                 @if ($plan->recipe)
                                     <a href="{{ route('recipe.detail', $plan->recipe->id) }}" class="block">
                                         <li
-                                            class="p-4 bg-white border border-yellow-200 backdrop-blur-md rounded-xl shadow hover:scale-[1.01] hover:shadow-md transition-all duration-200 cursor-pointer">
+                                            class="p-4 bg-white border border-primary-200 backdrop-blur-md rounded-xl shadow hover:scale-[1.01] hover:shadow-md transition-all duration-200 cursor-pointer">
                                             <div class="flex items-center gap-3 text-gray-800">
                                                 <span class="text-2xl">{{ $icons[$plan->meal_type] ?? '🍴' }}</span>
                                                 <div class="text-sm sm:text-base">
@@ -122,11 +122,11 @@
                     </div>
 
                     <!-- Recently Saved Recipes -->
-                    <div class="bg-orange-100 shadow rounded-2xl p-4 flex flex-col h-full">
+                    <div class="bg-accent-100 shadow rounded-2xl p-4 flex flex-col h-full">
                         <div class="flex items-center justify-between mb-4">
                             <h2 class="text-lg sm:text-xl md:text-xl font-semibold">❤️ Recently Saved Recipes</h2>
                             <a href="{{ route('recipes.saved') }}"
-                                class="text-sm sm:text-base md:text-base text-blue-600 hover:underline">View All</a>
+                                class="text-sm sm:text-base md:text-base text-info-600 hover:underline">View All</a>
                         </div>
                         <div class="space-y-3 flex-1">
                             @forelse ($recentFavorites as $recipe)
@@ -158,11 +158,11 @@
                 </div>
 
                 <!-- Right Column -->
-                <div class="bg-amber-50 shadow rounded-2xl p-4 flex flex-col h-full">
+                <div class="bg-accent-50 shadow rounded-2xl p-4 flex flex-col h-full">
                     <div class="flex items-center justify-between mb-5">
                         <h2 class="text-lg sm:text-xl md:text-xl font-semibold">🥗 Recipe Recommendations</h2>
                         <a href="{{ route('recipes.browse') }}"
-                            class="text-sm sm:text-base md:text-base text-blue-600 hover:underline">View All</a>
+                            class="text-sm sm:text-base md:text-base text-info-600 hover:underline">View All</a>
                     </div>
                     <div class="space-y-3 flex-1">
                         @foreach ($recommendedRecipes as $recipe)

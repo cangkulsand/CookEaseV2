@@ -28,7 +28,7 @@
                 class="border border-gray-300 rounded px-4 py-2 w-full md:w-28">
 
             <button type="submit"
-                class="bg-yellow-500 text-white px-4 py-2 rounded w-full md:w-auto hover:bg-yellow-600">
+                class="bg-primary-500 text-white px-4 py-2 rounded w-full md:w-auto hover:bg-primary-600">
                 <i class="fa-solid fa-magnifying-glass fa-sm"></i> Filter
             </button>
         </form>
@@ -49,7 +49,7 @@
                             <!-- This section sticks to the bottom -->
                             <div class="mt-auto text-xs text-gray-600 flex justify-between pt-4">
                                 <span>⏱ {{ $recipe->duration }}</span>
-                                <span class="text-orange-500">🔥 {{ $recipe->calories }} kcal</span>
+                                <span class="text-accent-500">🔥 {{ $recipe->calories }} kcal</span>
                             </div>
                         </div>
                     </a>

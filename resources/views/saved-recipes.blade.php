@@ -21,7 +21,7 @@
                             <!-- This section sticks to the bottom -->
                             <div class="mt-auto text-xs text-gray-600 flex justify-between pt-4">
                                 <span>⏱ {{ $favorite->recipe->duration }}</span>
-                                <span class="text-orange-500">🔥 {{ $favorite->recipe->calories }} kcal</span>
+                                <span class="text-accent-500">🔥 {{ $favorite->recipe->calories }} kcal</span>
                             </div>
                         </div>
                     </a>

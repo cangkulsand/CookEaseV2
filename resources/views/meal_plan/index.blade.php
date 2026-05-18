@@ -16,7 +16,7 @@
 
                 <div class="relative w-[200px]">
                     <select name="date" id="date" onchange="this.form.submit()"
-                        class="appearance-none w-full border border-gray-300 rounded-md py-2 pl-3 pr-10 text-xs shadow-sm focus:ring-2 focus:ring-red-300 focus:border-red-300">
+                        class="appearance-none w-full border border-gray-300 rounded-md py-2 pl-3 pr-10 text-xs shadow-sm focus:ring-2 focus:ring-danger-300 focus:border-danger-300">
                         @foreach ($availableDates as $availableDate)
                             <option value="{{ $availableDate }}" {{ $date == $availableDate ? 'selected' : '' }}>
                                 {{ \Carbon\Carbon::parse($availableDate)->format('l, d M Y') }}
@@ -61,7 +61,7 @@
                                             Edit
                                         </button>
                                         <button type="button" onclick="confirmDelete({{ $meal->id }})"
-                                            class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-100">
+                                            class="w-full text-left px-4 py-2 text-danger-600 hover:bg-danger-100">
                                             Delete
                                         </button>
 
@@ -83,7 +83,7 @@
                                 </a>
                                 <div class="px-6 py-4 mb-auto">
                                     <a href="{{ route('recipe.detail', $recipe->id) }}"
-                                        class="font-medium text-lg inline-block hover:text-indigo-600 transition mb-2">
+                                        class="font-medium text-lg inline-block hover:text-primary-600 transition mb-2">
                                         {{ $recipe->name }}
                                     </a>
                                     <p class="text-gray-500 text-sm">{{ $recipe->description }}</p>
@@ -131,7 +131,7 @@
                                             <button type="button" onclick="closeModal({{ $meal->id }})"
                                                 class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded">Cancel</button>
                                             <button type="submit"
-                                                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Update</button>
+                                                class="bg-info-500 hover:bg-info-600 text-white px-4 py-2 rounded">Update</button>
                                         </div>
                                     </form>
                                 </div>
@@ -147,7 +147,7 @@
                     <h2 class="text-xl mb-3">😴 No meals planned for this date.</h2>
                     <p class="text-base mb-5">Let’s fix that by generating something delicious.</p>
                     <a href="{{ route('generate') }}"
-                        class="inline-block bg-red-500 hover:bg-red-600 text-white text-sm px-6 py-2 rounded shadow transition-transform hover:scale-105">
+                        class="inline-block bg-danger-500 hover:bg-danger-600 text-white text-sm px-6 py-2 rounded shadow transition-transform hover:scale-105">
                         🍳 Generate Recipe
                     </a>
                 </div>

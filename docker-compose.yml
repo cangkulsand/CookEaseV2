@@ -1,0 +1,47 @@
+services:
+  app:
+    build: .
+    image: cookease:dev
+    container_name: cookease-app
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: cookease
+      DB_USERNAME: cookease
+      DB_PASSWORD: secret
+    env_file:
+      - .env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./storage:/var/www/storage
+    networks: [cookease]
+
+  mysql:
+    image: mysql:8.0
+    container_name: cookease-mysql
+    environment:
+      MYSQL_DATABASE: cookease
+      MYSQL_USER: cookease
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: rootsecret
+    ports:
+      - "3306:3306"
+    volumes:
+      - cookease-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-uroot", "-prootsecret"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [cookease]
+
+volumes:
+  cookease-mysql-data:
+
+networks:
+  cookease:
+    driver: bridge

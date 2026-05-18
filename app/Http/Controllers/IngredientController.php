@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\GenerateRecipesJob;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class IngredientController extends Controller
@@ -145,96 +145,79 @@ Each recipe must be in **JSON format** and include:
 Return **only a JSON array** of recipe objects. Do not include any explanation or introduction text.
 PROMPT;
 
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $apiKey,
-                'Content-Type' => 'application/json',
-            ])->post('https://api.groq.com/openai/v1/chat/completions', [
-                        'model' => 'meta-llama/llama-4-scout-17b-16e-instruct',
-                        'messages' => [
-                            ['role' => 'user', 'content' => $prompt],
-                        ],
-                    ]);
+        $generationId = (string) Str::uuid();
+        $cacheKey = GenerateRecipesJob::cacheKey($user->id, $generationId);
 
-            $json = $response->json();
+        Cache::put($cacheKey, ['status' => 'pending'], now()->addHour());
 
-            if (isset($json['error'])) {
-                Log::error('Groq API error: ' . $json['error']['message']);
-                return back()->with('message', 'Failed to generate recipe: ' . $json['error']['message']);
-            }
+        GenerateRecipesJob::dispatch(
+            $generationId,
+            $user->id,
+            $prompt,
+            $ingredients,
+        );
 
-            $aiContent = $json['choices'][0]['message']['content'] ?? null;
-            Log::info('Groq AI Response:', ['content' => $aiContent]);
-
-            try {
-                $aiContent = trim($aiContent);
-                if (str_starts_with($aiContent, '```json')) {
-                    $aiContent = preg_replace('/^```json\s*/', '', $aiContent);
-                    $aiContent = preg_replace('/```$/', '', $aiContent);
-                    $aiContent = trim($aiContent);
-                }
-
-                $recipes = json_decode($aiContent, true);
-                if (!is_array($recipes)) {
-                    throw new \Exception('Decoded result is not an array.');
-                }
-            } catch (\Exception $e) {
-                Log::error('Failed to decode AI JSON: ' . $e->getMessage());
-                return back()->with('message', 'AI did not return usable recipe data.');
-            }
-
-            foreach ($recipes as &$recipe) {
-                $recipe['image'] = $this->getImageFromPixabay($recipe['name']);
-            }
-
-            session([
-                'generated_recipes' => $recipes,
-                'ingredients_used' => $ingredients,
-            ]);
-
-            return redirect()->route('generate.result');
-
-        } catch (\Exception $e) {
-            Log::error('Groq API exception: ' . $e->getMessage());
-            return back()->with('message', 'An error occurred while contacting the AI service.');
-        }
+        return redirect()->route('generate.waiting', ['generationId' => $generationId]);
     }
 
-     public function showResult()
+    public function waiting(string $generationId)
     {
-        $recipes = session('generated_recipes');
-        $ingredients = session('ingredients_used');
-        $recentIngredients = $this->getGroupedIngredientData(Auth::id())['recent'] ?? [];
-        $frequentIngredients = $this->getGroupedIngredientData(Auth::id())['frequent'] ?? [];
+        $cached = Cache::get(GenerateRecipesJob::cacheKey(Auth::id(), $generationId));
 
-        if (!$recipes) {
+        if (!$cached) {
+            return redirect()->route('generate')->with('message', 'Recipe generation not found. Please try again.');
+        }
+
+        if (($cached['status'] ?? null) === 'complete') {
+            return redirect()->route('generate.result', ['generationId' => $generationId]);
+        }
+
+        if (($cached['status'] ?? null) === 'failed') {
+            return redirect()->route('generate')->with('message', $cached['message'] ?? 'Recipe generation failed.');
+        }
+
+        return view('generate-waiting', [
+            'generationId' => $generationId,
+        ]);
+    }
+
+    public function status(string $generationId)
+    {
+        $cached = Cache::get(GenerateRecipesJob::cacheKey(Auth::id(), $generationId));
+
+        if (!$cached) {
+            return response()->json(['status' => 'missing'], 404);
+        }
+
+        $payload = ['status' => $cached['status'] ?? 'pending'];
+
+        if (($cached['status'] ?? null) === 'complete') {
+            $payload['redirect'] = route('generate.result', ['generationId' => $generationId]);
+        } elseif (($cached['status'] ?? null) === 'failed') {
+            $payload['message'] = $cached['message'] ?? 'Recipe generation failed.';
+        }
+
+        return response()->json($payload);
+    }
+
+    public function showResult(string $generationId)
+    {
+        $cached = Cache::get(GenerateRecipesJob::cacheKey(Auth::id(), $generationId));
+
+        if (!$cached || ($cached['status'] ?? null) !== 'complete') {
             return redirect()->route('generate')->with('message', 'No recipe found. Please try again.');
         }
 
+        $recentIngredients   = $this->getGroupedIngredientData(Auth::id())['recent']   ?? [];
+        $frequentIngredients = $this->getGroupedIngredientData(Auth::id())['frequent'] ?? [];
+
         return view('generate-results', [
-            'recipes' => $recipes,
-            'ingredients' => $ingredients,
-            'recentIngredients' => $recentIngredients,
+            'recipes'             => $cached['recipes'],
+            'ingredients'         => $cached['ingredients_used'] ?? '',
+            'generationId'        => $generationId,
+            'recentIngredients'   => $recentIngredients,
             'frequentIngredients' => $frequentIngredients,
         ]);
-    }
-
-    protected function getImageFromPixabay($query)
-    {
-        $response = Http::get('https://pixabay.com/api/', [
-            'key' => config('services.pixabay.key'),
-            'q' => $query,
-            'image_type' => 'photo',
-            'category' => 'food',
-            'safesearch' => true,
-            'per_page' => 3,
-        ]);
-
-        if ($response->successful() && isset($response['hits'][0]['webformatURL'])) {
-            return $response['hits'][0]['webformatURL'];
-        }
-
-        return asset('images/placeholder.jpg');
     }
 
     public function getGroupedIngredients()

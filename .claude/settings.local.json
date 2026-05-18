@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php -v)",
+      "Bash(composer -V)",
+      "Bash(npm -v)",
+      "PowerShell(php -v)",
+      "PowerShell(composer -V)",
+      "PowerShell($mysqlBin = Get-ChildItem 'C:\\\\laragon\\\\bin\\\\mysql' -Directory | Sort-Object Name -Descending | Select-Object -First 1; Write-Output \"mysql dir: $\\($mysqlBin.FullName\\)\"; & \"$\\($mysqlBin.FullName\\)\\\\bin\\\\mysql.exe\" -u root -e \"SELECT VERSION\\(\\);\" 2>&1)",
+      "PowerShell($env:PATH = \"C:\\\\laragon\\\\bin\\\\php\\\\php-8.3.30-Win32-vs16-x64;C:\\\\laragon\\\\bin\\\\composer;C:\\\\laragon\\\\bin\\\\nodejs\\\\node-v22;$env:PATH\"; composer install --no-interaction --prefer-dist 2>&1 | Tee-Object -FilePath \"$env:TEMP\\\\composer-install.log\")",
+      "PowerShell(& \"C:\\\\laragon\\\\bin\\\\mysql\\\\mysql-8.4.3-winx64\\\\bin\\\\mysql.exe\" -u root -e \"CREATE DATABASE IF NOT EXISTS cookease CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; SHOW DATABASES LIKE 'cookease';\" 2>&1)",
+      "PowerShell($env:PATH = \"C:\\\\laragon\\\\bin\\\\nodejs\\\\node-v22;$env:PATH\"; npm install --no-audit --no-fund 2>&1 | Tee-Object -FilePath \"$env:TEMP\\\\npm-install.log\")",
+      "Bash(findstr /i \"env\")",
+      "Bash(xargs -0 sed -i -e s/-yellow-/-primary-/g -e s/-green-/-primary-/g -e s/-indigo-/-primary-/g -e s/-lime-/-primary-/g -e s/-amber-/-accent-/g -e s/-orange-/-accent-/g -e s/-red-/-danger-/g -e s/-blue-/-info-/g)",
+      "Bash(npm run *)",
+      "Bash(git *)",
+      "Bash(php -l app/Jobs/GenerateRecipesJob.php)",
+      "Bash(php -l app/Http/Controllers/IngredientController.php)",
+      "Bash(php -l routes/web.php)",
+      "Bash(php artisan *)"
+    ]
+  }
+}

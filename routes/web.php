@@ -1,9 +1,11 @@
 <?php
 
+use App\Jobs\GenerateRecipesJob;
 use App\Models\Recipe;
 use App\Models\Review;
 use App\Models\Favorite;
 use App\Models\MealPlan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -43,7 +45,9 @@ Route::middleware(['auth'])->group(function () {
     // Recipe Generation Flow
     Route::get('/generate', [GenerateController::class, 'showForm'])->name('generate');
     Route::post('/generate', [IngredientController::class, 'process'])->name('generate.process');
-    Route::get('/generate-result', [IngredientController::class, 'showResult'])->name('generate.result');
+    Route::get('/generating/{generationId}', [IngredientController::class, 'waiting'])->name('generate.waiting');
+    Route::get('/generate-status/{generationId}', [IngredientController::class, 'status'])->name('generate.status');
+    Route::get('/generate-result/{generationId}', [IngredientController::class, 'showResult'])->name('generate.result');
 
     // API for frontend Tagify
     Route::get('/api/ingredients', [IngredientController::class, 'getIngredients']);
@@ -52,7 +56,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/browse-recipes', [RecipeController::class, 'browse'])->name('recipes.browse');
     Route::post('/review', [ReviewController::class, 'store'])->name('review.store');
     Route::get('/recipe-detail/{index}', function ($index) {
-        $isSession = request()->query('from') === 'session';
+        $from = request()->query('from');
+        $isSession = $from === 'session' || $from === 'generation';
         $user = Auth::user();
         $isFavorited = false;
         $isPlanned = false;
@@ -61,7 +66,16 @@ Route::middleware(['auth'])->group(function () {
         $reviews = [];
 
         if ($isSession) {
-            $recipes = session('generated_recipes', []);
+            if ($from === 'generation') {
+                $generationId = request()->query('id');
+                $cached = $generationId
+                    ? Cache::get(GenerateRecipesJob::cacheKey(Auth::id(), $generationId))
+                    : null;
+                $recipes = ($cached['status'] ?? null) === 'complete' ? ($cached['recipes'] ?? []) : [];
+            } else {
+                $recipes = session('generated_recipes', []);
+            }
+
             if (!isset($recipes[$index])) {
                 abort(404);
             }

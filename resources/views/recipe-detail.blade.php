@@ -12,7 +12,7 @@
             x-init="setTimeout(() => show = false, 3000)" 
             x-show="show" 
             class="max-w-4xl mx-auto mt-6">
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+            <div class="bg-primary-100 border border-primary-400 text-primary-700 px-4 py-3 rounded relative" role="alert">
                 <strong class="font-bold">Success!</strong>
                 <span class="block sm:inline">{{ session('message') }}</span>
             </div>
@@ -60,11 +60,11 @@
                     <textarea id="groceryListText" class="hidden"></textarea>
 
                     <!-- Copy to Clipboard Confirmation -->
-                    <div id="copyMessage" class="hidden text-green-600 mt-2 font-medium text-center">Copied to clipboard! ✅</div>
+                    <div id="copyMessage" class="hidden text-primary-600 mt-2 font-medium text-center">Copied to clipboard! ✅</div>
                     
                     <!-- 🛒 Dropdown Grocery List Actions -->
                     <div x-data="{ open: false }" class="relative">
-                        <button @click="open = !open" class="text-sm bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 w-full sm:w-auto">
+                        <button @click="open = !open" class="text-sm bg-primary-500 text-white px-4 py-2 rounded hover:bg-primary-600 w-full sm:w-auto">
                             🛒 Generate Shopping List
                         </button>
 
@@ -98,7 +98,7 @@
                             <input type="hidden" name="instructions" value="{{ is_array($recipe['instructions']) ? implode("\n", $recipe['instructions']) : $recipe['instructions'] }}">
                             <input type="hidden" name="ingredients" value="{{ json_encode($recipe['ingredients']) }}">
                             <input type="hidden" name="groceryLists" value="{{ json_encode($recipe['groceryLists']) }}">
-                            <button type="submit" class="text-sm bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full sm:w-auto">🤍 Save</button>
+                            <button type="submit" class="text-sm bg-danger-500 text-white px-4 py-2 rounded hover:bg-danger-600 w-full sm:w-auto">🤍 Save</button>
                         </form>
                     @else
                         @if ($isFavorited && isset($recipeId))
@@ -121,7 +121,7 @@
                                 <input type="hidden" name="instructions" value="{{ $recipe['instructions'] }}">
                                 <input type="hidden" name="ingredients" value="{{ json_encode($recipe['ingredients']) }}">
                                 <input type="hidden" name="groceryLists" value="{{ json_encode($recipe['groceryLists']) }}">
-                                <button type="submit" class="text-sm bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full sm:w-auto">🤍 Save</button>
+                                <button type="submit" class="text-sm bg-danger-500 text-white px-4 py-2 rounded hover:bg-danger-600 w-full sm:w-auto">🤍 Save</button>
                             </form>
                         @endif
                     @endif
@@ -135,7 +135,7 @@
                     @else
                         <button type="button"
                             onclick="document.getElementById('addToPlanModal').classList.remove('hidden')"
-                            class="text-sm bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full sm:w-auto">
+                            class="text-sm bg-info-500 text-white px-4 py-2 rounded hover:bg-info-600 w-full sm:w-auto">
                             📅 Add to Meal Plan
                         </button>
                     @endif
@@ -161,7 +161,7 @@
     <div id="addToPlanModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
         <div class="bg-white p-6 rounded shadow-lg w-full max-w-md relative">
             <button onclick="document.getElementById('addToPlanModal').classList.add('hidden')"
-                class="absolute top-2 right-2 text-gray-400 hover:text-red-600 text-xl">&times;</button>
+                class="absolute top-2 right-2 text-gray-400 hover:text-danger-600 text-xl">&times;</button>
 
             <h2 class="text-lg font-semibold text-gray-800 mb-4">Add This Recipe to Your Meal Plan</h2>
 
@@ -195,7 +195,7 @@
                 </div>
 
                 <div class="flex justify-end">
-                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm">Add to plan</button>
+                    <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded text-sm">Add to plan</button>
                 </div>
             </form>
         </div>
@@ -203,26 +203,26 @@
 
     <!-- Success & Error Toasts -->
     <div id="successMessage"
-        class="fixed bottom-6 right-6 bg-green-100 border border-green-300 text-green-800 px-6 py-4 rounded-lg shadow-lg z-50 hidden">
+        class="fixed bottom-6 right-6 bg-primary-100 border border-primary-300 text-primary-800 px-6 py-4 rounded-lg shadow-lg z-50 hidden">
         <div class="flex items-center justify-between">
             <div>
                 <p class="font-semibold">Meal plan added successfully.</p>
                 <p class="text-sm text-gray-700 mt-1">You can now view your updated meal plan.</p>
             </div>
             <button onclick="document.getElementById('successMessage').classList.add('hidden')"
-                class="text-red-500 hover:text-red-700 text-lg font-bold leading-none">&times;</button>
+                class="text-danger-500 hover:text-danger-700 text-lg font-bold leading-none">&times;</button>
         </div>
     </div>
 
     <div id="errorMessage"
-        class="fixed bottom-6 right-6 bg-red-100 border border-red-300 text-red-800 px-6 py-4 rounded-lg shadow-lg z-50 hidden">
+        class="fixed bottom-6 right-6 bg-danger-100 border border-danger-300 text-danger-800 px-6 py-4 rounded-lg shadow-lg z-50 hidden">
         <div class="flex items-center justify-between">
             <div>
                 <p class="font-semibold">Failed to add meal plan.</p>
                 <p id="errorDetail" class="text-sm text-gray-700 mt-1">Something went wrong.</p>
             </div>
             <button onclick="document.getElementById('errorMessage').classList.add('hidden')"
-                class="text-red-500 hover:text-red-700 text-lg font-bold leading-none">&times;</button>
+                class="text-danger-500 hover:text-danger-700 text-lg font-bold leading-none">&times;</button>
         </div>
     </div>
 
@@ -255,14 +255,14 @@
                         </div>
 
                         <div class="text-right">
-                            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Submit Review</button>
+                            <button type="submit" class="bg-info-600 text-white px-4 py-2 rounded hover:bg-info-700">Submit Review</button>
                         </div>
                     </form>
                 @else
                     <p class="text-gray-600 mb-6">✅ You've already submitted a review for this recipe.</p>
                 @endif
             @else
-                <p class="text-gray-600 mb-6">Please <a href="{{ route('login') }}" class="text-blue-500 hover:underline">login</a> to leave a review.</p>
+                <p class="text-gray-600 mb-6">Please <a href="{{ route('login') }}" class="text-info-500 hover:underline">login</a> to leave a review.</p>
             @endauth
 
             <!-- Display Reviews -->
@@ -270,7 +270,7 @@
                 <div class="border-t border-gray-200 pt-4 mt-4">
                     <div class="flex justify-between items-center mb-2">
                         <div class="text-sm font-semibold text-gray-800">{{ $review->user->name }}</div>
-                        <div class="text-yellow-500 text-sm">
+                        <div class="text-primary-500 text-sm">
                             @for ($i = 0; $i < $review->rating; $i++)
                                 ⭐
                             @endfor
@@ -285,7 +285,7 @@
         </div>
     </div>
     @else
-        <div class="max-w-4xl mx-auto mt-10 bg-yellow-50 text-yellow-800 border border-yellow-200 rounded-xl p-6">
+        <div class="max-w-4xl mx-auto mt-10 bg-primary-50 text-primary-800 border border-primary-200 rounded-xl p-6">
             <p class="text-sm">✨ This is a newly generated recipe. Please save it first to unlock review features.</p>
         </div>
     @endif
