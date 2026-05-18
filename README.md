@@ -61,9 +61,13 @@ docker compose logs -f app
 ```
 
 First build takes ~5 minutes (Composer + npm). When the log shows
-`Server running on http://0.0.0.0:8000`, open:
+`Server running on http://0.0.0.0:8000`, open the application using either method below:
 
-**→ http://localhost:8000**
+- **Browser:**  
+  **→ http://localhost:8000**
+
+- **Docker Desktop:**  
+  Open Docker Desktop → Containers → select the container → click the exposed **8000** port link.
 
 You should land on the CookEase login page. If you imported a dump, log in with your existing accounts. Otherwise register a new user.
 
