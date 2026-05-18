@@ -42,6 +42,15 @@ services:
       retries: 10
     networks: [cookease]
 
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: cookease-mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"   # SMTP (used by the app)
+      - "8025:8025"   # Web UI (open in your browser)
+    networks: [cookease]
+
 volumes:
   cookease-mysql-data:
 
