@@ -63,7 +63,7 @@ class GenerateRecipesJob implements ShouldQueue
         $aiContent = trim($json['choices'][0]['message']['content'] ?? '');
 
         // Remove markdown code block wrapper
-        if (str_starts_with($aiContent, '```json')) {
+        if (preg_match('/^```json\b/i', $aiContent) === 1) {
             $aiContent = preg_replace('/^```json\s*/i', '', $aiContent);
             $aiContent = preg_replace('/```$/', '', $aiContent);
             $aiContent = trim($aiContent);
