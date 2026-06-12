@@ -11,6 +11,17 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| CODE SMELL 1: High Surface Area / Shotgun Surgery
+|--------------------------------------------------------------------------
+| Smell: Importing 9 separate controllers just to handle standard authentication.
+| If the namespace changes or we swap auth engines, we have to touch every single 
+| line here.
+| 
+| Fix: Use `Route::controller()` syntax to group routes belonging to the same 
+| class, reducing the noise and making it easier to change targets later.
+*/
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
