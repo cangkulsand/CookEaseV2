@@ -17,7 +17,13 @@
       "Bash(php -l app/Jobs/GenerateRecipesJob.php)",
       "Bash(php -l app/Http/Controllers/IngredientController.php)",
       "Bash(php -l routes/web.php)",
-      "Bash(php artisan *)"
+      "Bash(php artisan *)",
+      "Bash(python -c \"import pypdf\")",
+      "Bash(pdftotext -layout \"Update Task Part A Software Construction V3.pdf\" -)",
+      "Bash(vendor/bin/pest --testsuite=Unit)",
+      "Bash(python -c \"import yaml; yaml.safe_load\\(open\\('.github/workflows/ci.yml'\\)\\); print\\('YAML OK'\\)\")",
+      "Bash(python -c \"import xml.dom.minidom as m; m.parse\\('jmeter/cookease-load-test.jmx'\\); print\\('JMX XML OK'\\)\")",
+      "Bash(python -c \"import yaml; d=yaml.safe_load\\(open\\('.github/workflows/ci.yml'\\)\\); print\\('YAML OK — jobs:', list\\(d['jobs'].keys\\(\\)\\)\\)\")"
     ]
   }
 }
