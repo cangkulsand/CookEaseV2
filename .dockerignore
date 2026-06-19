@@ -1,0 +1,56 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Dependencies — re-installed inside the container
+node_modules
+vendor
+
+# Built assets — re-built inside the container
+public/build
+public/hot
+
+# Broken symlink that Laravel creates via `artisan storage:link`.
+# The container creates it fresh on startup, so it must NOT be in the build context.
+public/storage
+
+# Laravel runtime caches — should not ship into the image
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/framework/testing/*
+storage/logs/*.log
+
+# Local environment & secrets
+.env
+.env.*.local
+.env.local
+
+# Editor / OS metadata
+.idea
+.vscode
+.fleet
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# CI / build artifacts
+coverage
+.phpunit.result.cache
+.phpunit.cache
+phpunit.coverage.xml
+.pest-cache
+
+# Docker meta (don't ship the compose file into the image)
+docker-compose.yml
+docker-compose.*.yml
+Dockerfile
+.dockerignore
+
+# Docs / repo meta — not needed in the runtime image
+README.md
+CONTRIBUTING.md
+CLAUDE.md
+docs
