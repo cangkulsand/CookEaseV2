@@ -23,7 +23,9 @@
       "Bash(vendor/bin/pest --testsuite=Unit)",
       "Bash(python -c \"import yaml; yaml.safe_load\\(open\\('.github/workflows/ci.yml'\\)\\); print\\('YAML OK'\\)\")",
       "Bash(python -c \"import xml.dom.minidom as m; m.parse\\('jmeter/cookease-load-test.jmx'\\); print\\('JMX XML OK'\\)\")",
-      "Bash(python -c \"import yaml; d=yaml.safe_load\\(open\\('.github/workflows/ci.yml'\\)\\); print\\('YAML OK — jobs:', list\\(d['jobs'].keys\\(\\)\\)\\)\")"
+      "Bash(python -c \"import yaml; d=yaml.safe_load\\(open\\('.github/workflows/ci.yml'\\)\\); print\\('YAML OK — jobs:', list\\(d['jobs'].keys\\(\\)\\)\\)\")",
+      "Bash(DB_CONNECTION=sqlite DB_DATABASE=database/ci_test.sqlite php artisan migrate --force)",
+      "Bash(DB_CONNECTION=sqlite DB_DATABASE=database/ci_test.sqlite SESSION_DRIVER=file CACHE_STORE=file php artisan migrate --force)"
     ]
   }
 }
