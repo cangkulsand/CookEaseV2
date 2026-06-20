@@ -1,0 +1,71 @@
+# CookEase — A8 "Pull & Run" stack for team members.
+#
+# This does NOT build from source and does NOT need the GitHub repo.
+# It pulls the published image from Docker Hub and runs it next to a MySQL
+# database so the app actually loads in the browser.
+#
+# Usage (in this folder):
+#   docker compose up
+# then open http://localhost:8000  (login page should render)
+#
+# Stop with Ctrl+C, and `docker compose down -v` to remove the DB volume.
+
+services:
+  app:
+    image: sharhanarean/cookeasev2:latest   # <-- pulled from Docker Hub, no build
+    container_name: cookeasev2-app
+    ports:
+      - "8000:8000"
+    environment:
+      APP_NAME: CookEase
+      APP_ENV: local
+      APP_KEY: "base64:A/0E9RCOaiogQeIF5S7i+3vRdZftISpb/B8mzUKNYyY="  # demo key, fine to share
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_DATABASE: cookease
+      DB_USERNAME: cookease
+      DB_PASSWORD: secret
+
+      SESSION_DRIVER: database
+      CACHE_STORE: database
+      QUEUE_CONNECTION: sync
+
+      # Mail goes to the log instead of a real server, so no Mailpit needed here.
+      MAIL_MAILER: log
+
+      # External AI/image services are not exercised on the login page;
+      # dummy values keep config happy.
+      GROQ_API_KEY: demo
+      PIXABAY_API_KEY: demo
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks: [cookeasev2]
+
+  mysql:
+    image: mysql:8.0
+    container_name: cookeasev2-mysql
+    environment:
+      MYSQL_DATABASE: cookease
+      MYSQL_USER: cookease
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: rootsecret
+    volumes:
+      - cookeasev2-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-uroot", "-prootsecret"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [cookeasev2]
+
+volumes:
+  cookeasev2-mysql-data:
+
+networks:
+  cookeasev2:
+    driver: bridge
