@@ -69,66 +69,10 @@ class GenerateRecipesJob implements ShouldQueue
             $aiContent = trim($aiContent);
         }
 
-        // Attempt normal decode first
-        $recipes = json_decode($aiContent, true);
+        $recipes = $this->decodeAndRepairRecipes($aiContent);
 
-        // If invalid JSON, attempt recovery
-        if (json_last_error() !== JSON_ERROR_NONE) {
-
-            Log::warning('AI returned invalid JSON, attempting repair', [
-                'error' => json_last_error_msg(),
-            ]);
-
-            // Find last complete object
-            $lastBrace = strrpos($aiContent, '}');
-
-            if ($lastBrace !== false) {
-
-                // Keep valid portion only
-                $repairedJson = substr($aiContent, 0, $lastBrace + 1);
-
-                // Remove trailing comma
-                $repairedJson = rtrim($repairedJson, ',');
-
-                // Close array if missing
-                if (! str_ends_with(trim($repairedJson), ']')) {
-                    $repairedJson .= ']';
-                }
-
-                // Try decode again
-                $recipes = json_decode($repairedJson, true);
-
-                if (json_last_error() === JSON_ERROR_NONE) {
-
-                    Log::info('Successfully repaired AI JSON response');
-
-                } else {
-
-                    Log::error('Failed to repair AI JSON', [
-                        'error' => json_last_error_msg(),
-                        'content' => $aiContent,
-                    ]);
-
-                    $this->writeFailure(
-                        'AI returned invalid JSON: ' . json_last_error_msg()
-                    );
-
-                    return;
-                }
-
-            } else {
-
-                Log::error('AI returned invalid JSON with no recoverable object', [
-                    'error' => json_last_error_msg(),
-                    'content' => $aiContent,
-                ]);
-
-                $this->writeFailure(
-                    'AI returned invalid JSON: ' . json_last_error_msg()
-                );
-
-                return;
-            }
+        if (! is_array($recipes)) {
+            return;
         }
 
         // Ensure recipes is always an array
@@ -153,6 +97,75 @@ class GenerateRecipesJob implements ShouldQueue
             'recipes' => $recipes,
             'ingredients_used' => $this->ingredientsText,
         ], now()->addHour());
+    }
+
+    /**
+     * Decode AI JSON output and attempt repair if malformed.
+     *
+     * @param string $aiContent
+     * @return array|null
+     */
+    protected function decodeAndRepairRecipes(string $aiContent): ?array
+    {
+        // Try normal decode first
+        $recipes = json_decode($aiContent, true);
+
+        if (json_last_error() === JSON_ERROR_NONE && is_array($recipes)) {
+            return $recipes;
+        }
+
+        Log::warning('AI returned invalid JSON, attempting repair', [
+            'error' => json_last_error_msg(),
+        ]);
+
+        // Find last complete JSON object
+        $lastBrace = strrpos($aiContent, '}');
+
+        if ($lastBrace === false) {
+
+            Log::error('AI returned invalid JSON with no recoverable object', [
+                'error' => json_last_error_msg(),
+                'content' => $aiContent,
+            ]);
+
+            $this->writeFailure(
+                'AI returned invalid JSON: ' . json_last_error_msg()
+            );
+
+            return null;
+        }
+
+        // Keep valid portion only
+        $repairedJson = substr($aiContent, 0, $lastBrace + 1);
+
+        // Remove trailing commas
+        $repairedJson = rtrim($repairedJson, ',');
+
+        // Ensure array closure
+        if (! str_ends_with(trim($repairedJson), ']')) {
+            $repairedJson .= ']';
+        }
+
+        // Try decode again
+        $recipes = json_decode($repairedJson, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE || ! is_array($recipes)) {
+
+            Log::error('Failed to repair AI JSON', [
+                'error' => json_last_error_msg(),
+                'content' => $aiContent,
+            ]);
+
+            $this->writeFailure(
+                'AI returned invalid JSON: ' . json_last_error_msg()
+            );
+
+            return null;
+        }
+
+        Log::info('Successfully repaired AI JSON response');
+
+        return $recipes;
     }
 
     public function failed(\Throwable $exception): void
