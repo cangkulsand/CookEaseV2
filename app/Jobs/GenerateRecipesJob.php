@@ -105,6 +105,20 @@ class GenerateRecipesJob implements ShouldQueue
         }
         unset($recipe);
 
+        if (empty($recipes)) {
+
+            Log::warning('AI returned no recipes', [
+                'generation_id' => $this->generationId,
+                'user_id' => $this->userId,
+            ]);
+
+            $this->writeFailure(
+                'No recipes could be generated from the provided ingredients.'
+            );
+
+            return;
+        }
+
         Cache::put(self::cacheKey($this->userId, $this->generationId), [
             'status' => 'complete',
             'recipes' => $recipes,
