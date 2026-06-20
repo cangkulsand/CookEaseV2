@@ -51,6 +51,19 @@ class GenerateRecipesJob implements ShouldQueue
             ],
         ]);
 
+        if (! $response->successful()) {
+            Log::error('Groq API request failed', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            $this->writeFailure(
+                'Recipe generation service is unavailable.'
+            );
+
+            return;
+        }
+
         $json = $response->json();
 
         if (isset($json['error'])) {
