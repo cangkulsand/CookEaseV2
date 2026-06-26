@@ -6,28 +6,34 @@ use App\Models\Bmi;
 
 class CalorieCalculator
 {
-    public static function updateCalorieTarget(Bmi $bmi, ?string $goal = 'maintain_weight'): void
+    private const ACTIVITY_MULTIPLIER = 1.5;
+    private const WEIGHT_CHANGE_KCAL = 500;
+
+    /**
+     * Pure calculation only.
+     * No database interaction.
+     */
+    public static function calculate(Bmi $bmi, string $goal = 'maintain_weight'): int
     {
-        if ($bmi->gender === 'male') {
-            $bmr = 10 * $bmi->weight + 6.25 * $bmi->height - 5 * $bmi->age + 5;
-        } else {
-            $bmr = 10 * $bmi->weight + 6.25 * $bmi->height - 5 * $bmi->age - 161;
-        }
+        $bmr = self::calculateBmr($bmi);
+        $tdee = $bmr * self::ACTIVITY_MULTIPLIER;
 
-        $tdee = $bmr * 1.5;
+        $calories = match ($goal) {
+            'lose_weight' => $tdee - self::WEIGHT_CHANGE_KCAL,
+            'gain_weight' => $tdee + self::WEIGHT_CHANGE_KCAL,
+            default => $tdee,
+        };
 
-        switch ($goal) {
-            case 'lose_weight':
-                $calories = $tdee - 500;
-                break;
-            case 'gain_weight':
-                $calories = $tdee + 500;
-                break;
-            default:
-                $calories = $tdee;
-        }
+        return max(0, (int) round($calories));
+    }
 
-        $bmi->calorie_target = round($calories);
-        $bmi->save();
+    private static function calculateBmr(Bmi $bmi): float
+    {
+        $isMale = strtolower($bmi->gender) === 'male';
+
+        return (10 * $bmi->weight)
+            + (6.25 * $bmi->height)
+            - (5 * $bmi->age)
+            + ($isMale ? 5 : -161);
     }
 }
