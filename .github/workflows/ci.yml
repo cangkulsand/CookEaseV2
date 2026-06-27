@@ -64,6 +64,21 @@ jobs:
           PIXABAY_API_KEY: fake-key-for-ci
         run: vendor/bin/pest --testsuite=Unit
 
+  sonarcloud:
+    name: SonarCloud Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # full history → accurate new-code detection & blame
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   performance:
     name: JMeter Performance Test (A6)
     runs-on: ubuntu-latest
