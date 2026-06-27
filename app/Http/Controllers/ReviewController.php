@@ -11,38 +11,42 @@ class ReviewController extends Controller
 {
     public function store(Request $request)
     {
-        $request->validate([
+        $userId = Auth::id();
+
+        $data = $request->validate([
             'recipe_id' => 'required|exists:recipes,id',
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string|max:1000',
+            'rating'    => 'required|integer|min:1|max:5',
+            'comment'   => 'required|string|max:1000',
         ]);
 
-        // ✅ Check if user has saved the recipe
-        $hasSaved = Favorite::where('user_id', Auth::id())
-            ->where('recipe_id', $request->recipe_id)
-            ->exists();
+        $recipeId = $data['recipe_id'];
 
-        if (! $hasSaved) {
-            return back()->with('message', 'Please save this recipe first before leaving a review.');
+        // Check if user saved recipe (required condition)
+        if (
+            ! Favorite::where('user_id', $userId)
+                ->where('recipe_id', $recipeId)
+                ->exists()
+        ) {
+            return back()->with('message', 'Save recipe first before reviewing.');
         }
 
-        // ✅ Prevent duplicate review
-        $existingReview = Review::where('user_id', Auth::id())
-            ->where('recipe_id', $request->recipe_id)
-            ->first();
-
-        if ($existingReview) {
-            return back()->with('message', 'You already submitted a review for this recipe.');
+        // Prevent duplicate review
+        if (
+            Review::where('user_id', $userId)
+                ->where('recipe_id', $recipeId)
+                ->exists()
+        ) {
+            return back()->with('message', 'You already reviewed this recipe.');
         }
 
-        // ✅ Create the review
+        // Create review
         Review::create([
-            'user_id' => Auth::id(),
-            'recipe_id' => $request->recipe_id,
-            'rating' => $request->rating,
-            'comment' => $request->comment,
+            'user_id'   => $userId,
+            'recipe_id' => $recipeId,
+            'rating'    => $data['rating'],
+            'comment'   => $data['comment'],
         ]);
 
-        return back()->with('message', 'Review submitted!');
+        return back()->with('message', 'Review submitted.');
     }
 }
